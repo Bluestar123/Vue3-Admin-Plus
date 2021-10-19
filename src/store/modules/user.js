@@ -10,6 +10,58 @@ import { request } from '@/utils/request'
 import { asyncRoutes, constantRoutes } from '@/router'
 // import { dataToRoutes } from '@/utils/toRoutes'
 
+
+/**
+ * 从asyncMenus 过滤需要显示的 menus
+ */
+function helperMenus(authMenus) {
+  const menus = {};
+  function helper(arr) {
+    for (let i = 0; i < arr.length; i++) {
+      menus[arr[i].id] = true;
+      if (arr[i].children) {
+        helper(arr[i].children)
+      }
+    }
+  }
+  helper(authMenus)
+  return menus
+}
+/**
+ * 通过authority判断是否与当前用户权限匹配
+ * @param menus
+ * @param route
+ */
+function hasPermission(menus, route) {
+  if (route.authority) {
+    if (menus[route.authority] !== undefined) {
+      return menus[route.authority];
+    } else {
+      return false;
+    }
+  } else {
+    return true
+  }
+}
+
+/**
+ * 递归过滤异步路由表，返回符合用户角色权限的路由表
+ * @param asyncRouterMap
+ * @param roles
+ */
+function filterAsyncRouter(asyncRouterMap, menus) {
+  const accessedRouters = asyncRouterMap.filter(route => {
+    if (hasPermission(menus, route)) {
+      if (route.children && route.children.length) {
+        route.children = filterAsyncRouter(route.children, menus);
+      }
+      return true
+    }
+    return false
+  })
+  return accessedRouters
+}
+
 const getDefaultState = () => {
   return {
     token: getToken(),
@@ -80,8 +132,13 @@ const actions = {
         url: '/getInfo',
         method: 'get'
       }).then(data => {
+        // 获取后台用户要显示的路由
         const formatRoutes = []
         const asyncRoutes = [...formatRoutes, ...constantRoutes]
+
+        // let menus = helperMenus(formatRoutes)
+        // const asyncRoutes = [...filterAsyncRouter(asyncRouterMap, menus), ...constantRoutes]
+
         commit('SET_NAME', data.nickname)
         commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
         // 合并路由

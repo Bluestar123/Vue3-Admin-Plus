@@ -94,3 +94,10 @@ Modern browsers and Internet Explorer 10+.
 ## License
 
 [MIT](https://github.com/JaxsonWang/Vue3-Admin-Plus/blob/master/LICENSE)
+
+
+```
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+```

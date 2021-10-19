@@ -38,6 +38,15 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: false
+    },
+    proxy: {
+      '/api': {
+        target: 'https://www.fastmock.site',
+        chageOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
     }
   },
   configureWebpack: {

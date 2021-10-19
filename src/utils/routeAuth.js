@@ -53,7 +53,8 @@ router.beforeEach(async(to, from, next) => {
           // 获取用户信息
           const addRoutes = await store.dispatch('user/getInfo')
           // 添加服务器返回的路由
-          for (const route of addRoutes) router.addRoute(route)
+          // for (const route of addRoutes) router.addRoute(route)
+          router.addRoutes(addRoutes)
           next({ ...to, replace: true })
         } catch (error) {
           // 触发触发器并重定向到登录页
