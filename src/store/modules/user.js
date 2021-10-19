@@ -104,15 +104,15 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       request({
-        url: '/login',
+        url: '/login/login',
         method: 'post',
         data: {
           username: username.trim(),
           password: password
         }
       }).then(data => {
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        commit('SET_TOKEN', data.authorization)
+        setToken(data.authorization)
         resolve()
       }).catch(error => {
         reject(error)
@@ -134,11 +134,10 @@ const actions = {
       }).then(data => {
         // 获取后台用户要显示的路由
         const formatRoutes = []
-        const asyncRoutes = [...formatRoutes, ...constantRoutes]
+        // const asyncRoutes = [...formatRoutes, ...constantRoutes]
 
-        // let menus = helperMenus(formatRoutes)
-        // const asyncRoutes = [...filterAsyncRouter(asyncRouterMap, menus), ...constantRoutes]
-
+        let menus = helperMenus(formatRoutes)
+        const asyncRoutes = [...filterAsyncRouter(asyncRouterMap, menus), ...constantRoutes]
         commit('SET_NAME', data.nickname)
         commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
         // 合并路由

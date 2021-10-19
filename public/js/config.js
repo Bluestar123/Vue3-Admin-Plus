@@ -7,7 +7,7 @@
  */
 
 window.VUE_APP = {
-  VUE_APP_BASE_API: 'https://admin.api.i95.me',
-  VUE_APP_URI: '/api',
+  VUE_APP_BASE_API: 'http://111.132.4.138:28081',
+  VUE_APP_URI: '/jy-service',
   VUE_APP_DATA: '/data'
 }

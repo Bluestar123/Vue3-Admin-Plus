@@ -40,11 +40,11 @@ module.exports = {
       errors: false
     },
     proxy: {
-      '/api': {
-        target: 'https://www.fastmock.site',
+      '/jy-service': {
+        target: 'http://111.132.4.138:28081/jy-service',
         chageOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '^/jy-service': ''
         }
       }
     }

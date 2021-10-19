@@ -14,7 +14,7 @@ import { setToken } from '@/utils/auth'
 import store from '@/store'
 
 export const request = axios.create({
-  baseURL: process.env.NODE_ENV === 'development' ? process.env.VUE_APP_BASE_API + process.env.VUE_APP_URI : window.VUE_APP.VUE_APP_BASE_API + window.VUE_APP.VUE_APP_URI,
+  baseURL: process.env.NODE_ENV === 'development' ? '/jy-service' : window.VUE_APP.VUE_APP_BASE_API + window.VUE_APP.VUE_APP_URI,
   withCredentials: false,
   timeout: 10 * 1000
 })
@@ -32,24 +32,24 @@ request.interceptors.request.use(config => {
 
 request.interceptors.response.use(response => {
   const { data } = response
-  if (data.statusCode !== 200) {
+  if (data.code !== '0000') {
     ElMessage({
-      message: data.message || 'Error',
+      message: data.msg || 'Error',
       type: 'error',
       duration: 5 * 1000
     })
-    return Promise.reject(new Error(data.message || 'Error'))
+    return Promise.reject(new Error(data.msg || 'Error'))
   } else {
     // 判断 token 是否存在，如果存在说明后台系统推送新的 token 信息
     // 需要替换 cookie 里的 token
-    if (data.token) setToken(data.token)
+    if (data.authorization) setToken(data.authorization)
     return data.data
   }
 }, async(error) => {
   const { response } = error
   let data = '未知错误'
   if (response !== undefined) {
-    switch (response.data.statusCode) {
+    switch (response.data.code) {
       case 401:
         data = '用户 token 已失效，请重新登录！'
         ElMessage({
@@ -63,19 +63,19 @@ request.interceptors.response.use(response => {
         break
       default:
         ElMessage({
-          message: response.data.message,
+          message: response.data.msg,
           type: 'error',
           duration: 5 * 1000
         })
-        data = response.data.message
+        data = response.data.msg
     }
   } else {
     ElMessage({
-      message: error.message,
+      message: '网络异常',
       type: 'error',
       duration: 5 * 1000
     })
-    data = error.message
+    data = '网络异常'
   }
   return Promise.reject(data)
 })
